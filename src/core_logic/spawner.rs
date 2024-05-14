@@ -8,7 +8,7 @@ pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<Ass
         ;
     let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
-    commands.spawn((Player::new(), GridPosition { x: spawn.x, y: spawn.y }, RenderBundle {
+    commands.spawn((Player::new(), GridPosition { x: spawn.x, y: spawn.y }, Health { current: 10, max: 20 }, RenderBundle {
         sprite: SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
             transform: Transform { translation: Vec3::new(0.0, 0.0, 1.0), ..default() },

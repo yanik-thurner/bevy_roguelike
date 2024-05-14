@@ -8,6 +8,7 @@ mod collision;
 mod random_move;
 mod end_turn;
 mod movement;
+mod hud;
 
 pub struct CoreSystems;
 
@@ -15,6 +16,8 @@ impl Plugin for CoreSystems {
     fn build(&self, app: &mut App) {
         app.insert_state(TurnState::AwaitingInput);
         app.add_event::<WantsToMoveEvent>();
+
+        app.add_systems(Startup, hud::setup_hud);
 
         app.add_systems(Update, player_input::player_input_system.in_set(GameplaySet::AwaitingInput));
 
@@ -36,6 +39,7 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Update, sync_grid::sync_grid_system.after(player_input::player_input_system));
         app.add_systems(Update, sync_cam::sync_cam_system.after(sync_grid::sync_grid_system));
+        app.add_systems(Update, hud::update_healthbar);
 
         app.configure_sets(Update, (
             GameplaySet::AwaitingInput.run_if(in_state(TurnState::AwaitingInput)),
