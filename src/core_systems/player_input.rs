@@ -1,5 +1,4 @@
 use std::ops::Add;
-use crate::core_logic::map::Map;
 
 use crate::prelude::*;
 
@@ -14,8 +13,8 @@ impl Add for GridPosition {
     }
 }
 
-pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>, time: Res<Time>, mut query: Query<(Entity, &mut Player, &mut GridPosition)>, mut turn_state: ResMut<NextState<TurnState>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>) {
-    let (entity, mut player, mut position) = query.get_single_mut().unwrap();
+pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>, time: Res<Time>, mut query: Query<(Entity, &mut Player, &GridPosition)>, mut turn_state: ResMut<NextState<TurnState>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>) {
+    let (entity, mut player, position) = query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
         let delta = if keyboard_input.pressed(KeyCode::ArrowUp) {
             Some(GridPosition::NORTH)

@@ -81,7 +81,7 @@ fn setup_health_bar(commands: &mut Commands) {
     commands.entity(hp_root).push_children(&[hp_text]);
 }
 
-pub fn update_healthbar(mut commands: Commands, player_health_query: Query<&Health, With<Player>>, mut hp_bar_query: Query<&mut Style, With<HpBar>>, mut hp_text_query: Query<&mut Text, With<HpText>>) {
+pub fn update_healthbar(player_health_query: Query<&Health, With<Player>>, mut hp_bar_query: Query<&mut Style, With<HpBar>>, mut hp_text_query: Query<&mut Text, With<HpText>>) {
     let health = player_health_query.get_single().unwrap();
     let mut hp_bar = hp_bar_query.get_single_mut().unwrap();
     let mut hp_text = hp_text_query.get_single_mut().unwrap();
