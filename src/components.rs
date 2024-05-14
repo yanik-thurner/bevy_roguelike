@@ -1,5 +1,7 @@
 use bevy::render::view::RenderLayers;
-use rand::{distributions::{Distribution, Standard}, Rng};
+use rand::{distributions::{Distribution, Standard}, Rng, thread_rng};
+use rand::prelude::IndexedRandom;
+
 pub use crate::prelude::*;
 
 #[derive(Bundle)]
@@ -27,6 +29,13 @@ impl GridPosition {
             x,
             y,
         }
+    }
+
+    pub fn random_direction(include_no_movement: bool) -> GridPosition {
+        let options = if include_no_movement { vec![Self::NORTH, Self::EAST, Self::SOUTH, Self::WEST] } else { vec![Self::NORTH, Self::EAST, Self::SOUTH, Self::WEST, Self::ZERO] };
+        let mut rng = thread_rng();
+
+        *(options.choose(&mut rng).unwrap())
     }
 }
 
@@ -82,5 +91,7 @@ impl Player {
 #[derive(Component)]
 pub struct PlayerCamera;
 
+#[derive(Component)]
+pub struct MovingRandomly;
 
 

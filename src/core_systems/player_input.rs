@@ -1,9 +1,9 @@
-use std::ops::{Add, Deref};
-use bevy::input::keyboard::KeyboardInput;
+use std::ops::Add;
+
 use crate::prelude::*;
 
 impl Add for GridPosition {
-    type Output = (GridPosition);
+    type Output = GridPosition;
 
     fn add(self, rhs: Self) -> Self::Output {
         GridPosition {
