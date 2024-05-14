@@ -1,11 +1,9 @@
 use crate::core_logic::map::Map;
 use crate::prelude::*;
 
-pub fn system(map: Res<Map>, mut query: Query<&mut GridPosition, With<MovingRandomly>>) {
-    for mut position in query.iter_mut() {
+pub fn random_system(map: Res<Map>, mut query: Query<(Entity, &GridPosition), With<MovingRandomly>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>) {
+    for (entity, position) in query.iter() {
         let direction = GridPosition::random_direction(false);
-        if map.can_enter_tile(*position + direction) {
-            *position = *position + direction
-        }
+        ev_wants_to_move.send(WantsToMoveEvent { entity, destination: position.clone() + direction });
     }
 }

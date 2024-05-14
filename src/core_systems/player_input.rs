@@ -14,8 +14,8 @@ impl Add for GridPosition {
     }
 }
 
-pub fn system(keyboard_input: Res<ButtonInput<KeyCode>>, map: Res<Map>, time: Res<Time>, mut query: Query<(&mut Player, &mut GridPosition)>, mut turn_state: ResMut<NextState<TurnState>>) {
-    let (mut player, mut position) = query.get_single_mut().unwrap();
+pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>, time: Res<Time>, mut query: Query<(Entity, &mut Player, &mut GridPosition)>, mut turn_state: ResMut<NextState<TurnState>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>) {
+    let (entity, mut player, mut position) = query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
         let delta = if keyboard_input.pressed(KeyCode::ArrowUp) {
             Some(GridPosition::NORTH)
@@ -34,9 +34,7 @@ pub fn system(keyboard_input: Res<ButtonInput<KeyCode>>, map: Res<Map>, time: Re
         {
             player.move_cooldown.reset();
             let new_position = *position + delta;
-            if map.can_enter_tile(new_position) {
-                *position = *position + delta;
-            }
+            ev_wants_to_move.send(WantsToMoveEvent { entity, destination: new_position });
             turn_state.set(TurnState::PlayerTurn);
         }
     }

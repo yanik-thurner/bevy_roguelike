@@ -7,21 +7,35 @@ mod sync_cam;
 mod collision;
 mod random_move;
 mod end_turn;
+mod movement;
 
 pub struct CoreSystems;
 
 impl Plugin for CoreSystems {
     fn build(&self, app: &mut App) {
         app.insert_state(TurnState::AwaitingInput);
+        app.add_event::<WantsToMoveEvent>();
 
-        app.add_systems(Update, player_input::system.in_set(GameplaySet::AwaitingInput));
+        app.add_systems(Update, player_input::player_input_system.in_set(GameplaySet::AwaitingInput));
 
-        app.add_systems(Update, (collision::system, end_turn::system).chain().in_set(GameplaySet::PlayerTurn));
+        app.add_systems(Update, (movement::movement_system,
+                                 collision::collision_system,
+                                 end_turn::end_turn_system)
+            .chain()
+            .after(GameplaySet::AwaitingInput)
+            .in_set(GameplaySet::PlayerTurn));
 
-        app.add_systems(Update, (random_move::system, collision::system, end_turn::system).chain().in_set(GameplaySet::MonsterTurn));
+        app.add_systems(Update, (random_move::random_system,
+                                 movement::movement_system,
+                                 collision::collision_system,
+                                 end_turn::end_turn_system)
+            .chain()
+            .after(GameplaySet::AwaitingInput)
+            .after(GameplaySet::PlayerTurn)
+            .in_set(GameplaySet::MonsterTurn));
 
-        app.add_systems(Update, sync_grid::system);
-        app.add_systems(Update, sync_cam::system);
+        app.add_systems(Update, sync_grid::sync_grid_system.after(player_input::player_input_system));
+        app.add_systems(Update, sync_cam::sync_cam_system.after(sync_grid::sync_grid_system));
 
         app.configure_sets(Update, (
             GameplaySet::AwaitingInput.run_if(in_state(TurnState::AwaitingInput)),

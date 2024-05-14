@@ -8,6 +8,7 @@ mod core_systems;
 mod core_logic;
 mod states;
 mod system_sets;
+mod events;
 
 mod prelude {
     pub use bevy::prelude::*;
@@ -16,6 +17,7 @@ mod prelude {
     pub use crate::core_systems::*;
     pub use crate::core_logic::*;
     pub use crate::states::*;
+    pub use crate::events::*;
 
     pub const SPRITE_SIZE: f32 = 32.0;
     pub const SPRITE_SHEET_WALL: usize = 35;
