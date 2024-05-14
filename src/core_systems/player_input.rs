@@ -18,24 +18,26 @@ pub fn system(keyboard_input: Res<ButtonInput<KeyCode>>, map: Res<Map>, time: Re
     let (mut player, mut position) = query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
         let delta = if keyboard_input.pressed(KeyCode::ArrowUp) {
-            GridPosition::NORTH
+            Some(GridPosition::NORTH)
         } else if keyboard_input.pressed(KeyCode::ArrowDown) {
-            GridPosition::SOUTH
+            Some(GridPosition::SOUTH)
         } else if keyboard_input.pressed(KeyCode::ArrowLeft) {
-            GridPosition::WEST
+            Some(GridPosition::WEST)
         } else if keyboard_input.pressed(KeyCode::ArrowRight) {
-            GridPosition::EAST
+            Some(GridPosition::EAST)
+        } else if keyboard_input.pressed(KeyCode::Space) {
+            Some(GridPosition::ZERO)
         } else {
-            GridPosition::ZERO
+            None
         };
-        if delta != GridPosition::ZERO
+        if let Some(delta) = delta
         {
             player.move_cooldown.reset();
             let new_position = *position + delta;
             if map.can_enter_tile(new_position) {
                 *position = *position + delta;
-                turn_state.set(TurnState::PlayerTurn);
             }
+            turn_state.set(TurnState::PlayerTurn);
         }
     }
 }
