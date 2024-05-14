@@ -1,4 +1,5 @@
 use bevy::prelude::{Entity, Event};
+
 use crate::prelude::GridPosition;
 
 #[derive(Event)]

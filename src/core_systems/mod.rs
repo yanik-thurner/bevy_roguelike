@@ -9,6 +9,8 @@ mod random_move;
 mod end_turn;
 mod movement;
 mod hud;
+mod debug;
+mod hud_enemies;
 
 pub struct CoreSystems;
 
@@ -31,6 +33,7 @@ impl Plugin for CoreSystems {
         app.add_systems(Update, (random_move::random_system,
                                  movement::movement_system,
                                  collision::collision_system,
+                                 debug::debug_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(GameplaySet::AwaitingInput)
@@ -40,6 +43,8 @@ impl Plugin for CoreSystems {
         app.add_systems(Update, sync_grid::sync_grid_system.after(player_input::player_input_system));
         app.add_systems(Update, sync_cam::sync_cam_system.after(sync_grid::sync_grid_system));
         app.add_systems(Update, hud::update_healthbar);
+        app.add_systems(Update, hud_enemies::update_enemy_hud);
+
 
         app.configure_sets(Update, (
             GameplaySet::AwaitingInput.run_if(in_state(TurnState::AwaitingInput)),

@@ -1,14 +1,7 @@
-use bevy::render::view::RenderLayers;
 use rand::{distributions::{Distribution, Standard}, Rng, thread_rng};
 use rand::prelude::IndexedRandom;
 
 pub use crate::prelude::*;
-
-#[derive(Bundle)]
-pub struct RenderBundle {
-    pub sprite: SpriteSheetBundle,
-    pub layer: RenderLayers,
-}
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct GridPosition
@@ -99,3 +92,9 @@ pub struct Health {
     pub current: i32,
     pub max: i32,
 }
+
+#[derive(Component, Clone, Copy, Debug, PartialEq)]
+pub struct EnemyHpRoot;
+
+#[derive(Component, Clone, Copy, Debug, PartialEq)]
+pub struct EnemyHpBar;

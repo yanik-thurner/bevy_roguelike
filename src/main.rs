@@ -1,5 +1,4 @@
 use bevy::ecs::schedule::{LogLevel, ScheduleBuildSettings};
-use bevy::render::view::RenderLayers;
 
 use prelude::*;
 
@@ -14,10 +13,10 @@ mod prelude {
     pub use bevy::prelude::*;
 
     pub use crate::components::*;
-    pub use crate::core_systems::*;
     pub use crate::core_logic::*;
-    pub use crate::states::*;
+    pub use crate::core_systems::*;
     pub use crate::events::*;
+    pub use crate::states::*;
 
     pub const SPRITE_SIZE: f32 = 32.0;
     pub const SPRITE_SHEET_WALL: usize = 35;
@@ -28,7 +27,7 @@ fn setup(mut commands: Commands) {
     let mut camera = Camera2dBundle::default();
     camera.transform.scale /= 1.0;
 
-    commands.spawn((PlayerCamera, camera, RenderLayers::from_layers(&[0, 1, 2])));
+    commands.spawn((PlayerCamera, camera));
 }
 
 fn bevy_main() {

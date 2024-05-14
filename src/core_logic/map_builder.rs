@@ -1,8 +1,7 @@
-use bevy::render::view::RenderLayers;
 use rand::prelude::ThreadRng;
 use rand::Rng;
-use crate::core_logic::map::{Map, map_index, TileType};
 
+use crate::core_logic::map::{Map, map_index, TileType};
 use crate::prelude::*;
 use crate::prelude::map::{MAP_HEIGHT, MAP_WIDTH};
 
@@ -29,17 +28,14 @@ pub fn system(mut commands: Commands, asset_server: Res<AssetServer>, mut textur
         for x in 0..MAP_WIDTH {
             commands.spawn((
                 GridPosition { x: x as i32, y: y as i32 },
-                RenderBundle {
-                    sprite: SpriteSheetBundle {
-                        texture: asset_server.load("dungeonfont.png"),
-                        transform: Transform::from_xyz((x * 32) as f32, (y * 32) as f32, 0.0),
-                        atlas: TextureAtlas {
-                            layout: texture_atlas_layout.clone(),
-                            index: if map_builder.map.tiles[map_index(x as i32, y as i32)] == TileType::Wall { SPRITE_SHEET_WALL } else { SPRITE_SHEET_FLOOR },
-                        },
-                        ..default()
+                SpriteSheetBundle {
+                    texture: asset_server.load("dungeonfont.png"),
+                    transform: Transform::from_xyz((x * 32) as f32, (y * 32) as f32, 0.0),
+                    atlas: TextureAtlas {
+                        layout: texture_atlas_layout.clone(),
+                        index: if map_builder.map.tiles[map_index(x as i32, y as i32)] == TileType::Wall { SPRITE_SHEET_WALL } else { SPRITE_SHEET_FLOOR },
                     },
-                    layer: RenderLayers::layer(0),
+                    ..default()
                 },
             ));
         }
