@@ -1,4 +1,5 @@
 use bevy::render::view::RenderLayers;
+use crate::core_logic::map::Map;
 
 use crate::prelude::*;
 

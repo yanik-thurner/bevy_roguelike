@@ -1,8 +1,10 @@
 use bevy::render::view::RenderLayers;
 use rand::prelude::ThreadRng;
 use rand::Rng;
+use crate::core_logic::map::{Map, map_index, TileType};
 
 use crate::prelude::*;
+use crate::prelude::map::{MAP_HEIGHT, MAP_WIDTH};
 
 const NUM_ROOMS: usize = 20;
 

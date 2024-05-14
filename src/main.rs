@@ -4,18 +4,18 @@ use bevy::render::view::RenderLayers;
 use prelude::*;
 
 mod components;
-mod map;
-mod map_builder;
-mod spawner;
 mod core_systems;
+mod core_logic;
+mod states;
+mod system_sets;
 
 mod prelude {
     pub use bevy::prelude::*;
 
     pub use crate::components::*;
     pub use crate::core_systems::*;
-    pub use crate::map::*;
-    pub use crate::spawner::*;
+    pub use crate::core_logic::*;
+    pub use crate::states::*;
 
     pub const SPRITE_SIZE: f32 = 32.0;
     pub const SPRITE_SHEET_WALL: usize = 35;
@@ -39,7 +39,7 @@ fn bevy_main() {
             });
         })
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_systems(Startup, (map_builder::system, setup, spawn_player, spawn_random_monsters).chain())
+        .add_systems(Startup, (setup, map_builder::system, spawner::spawn_player, spawner::spawn_random_monsters).chain())
         .add_plugins(CoreSystems)
         .insert_resource(Msaa::Off)
         .run();
