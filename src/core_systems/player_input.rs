@@ -13,8 +13,15 @@ impl Add for GridPosition {
     }
 }
 
-pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>, time: Res<Time>, mut query: Query<(Entity, &mut Player, &GridPosition)>, mut turn_state: ResMut<NextState<TurnState>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>) {
-    let (entity, mut player, position) = query.get_single_mut().unwrap();
+pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
+                           time: Res<Time>,
+                           mut player_query: Query<(Entity, &mut Player, &GridPosition)>,
+                           enemy_query: Query<(&GridPosition, Entity), With<Enemy>>,
+                           mut turn_state: ResMut<NextState<TurnState>>,
+                           mut ev_wants_to_move: EventWriter<WantsToMoveEvent>,
+                           mut ev_wants_to_attack: EventWriter<WantsToAttack>,
+) {
+    let (entity, mut player, position) = player_query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
         let delta = if keyboard_input.pressed(KeyCode::ArrowUp) {
             Some(GridPosition::NORTH)
@@ -29,12 +36,30 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>, time: Res<
         } else {
             None
         };
-        if let Some(delta) = delta
-        {
-            player.move_cooldown.reset();
-            let new_position = *position + delta;
-            ev_wants_to_move.send(WantsToMoveEvent { entity, destination: new_position });
-            turn_state.set(TurnState::PlayerTurn);
+
+        match delta {
+            Some(GridPosition::ZERO) => {
+                player.move_cooldown.reset();
+                turn_state.set(TurnState::PlayerTurn);
+            }
+            Some(delta) => {
+                player.move_cooldown.reset();
+                let new_position = *position + delta;
+
+                let target = enemy_query
+                    .iter()
+                    .filter(|(pos, _)| **pos == new_position)
+                    .map(|(position, enemy)| enemy)
+                    .next();
+
+
+                if let Some(enemy) = target {
+                    ev_wants_to_attack.send(WantsToAttack { attacker: entity, victim: enemy });
+                } else {
+                    ev_wants_to_move.send(WantsToMoveEvent { entity, destination: new_position });
+                }
+            }
+            None => {}
         }
     }
 }

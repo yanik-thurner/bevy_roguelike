@@ -4,7 +4,6 @@ use crate::system_sets::GameplaySet;
 mod player_input;
 mod sync_grid;
 mod sync_cam;
-mod collision;
 mod random_move;
 mod end_turn;
 mod movement;
@@ -18,13 +17,13 @@ impl Plugin for CoreSystems {
     fn build(&self, app: &mut App) {
         app.insert_state(TurnState::AwaitingInput);
         app.add_event::<WantsToMoveEvent>();
+        app.add_event::<WantsToAttack>();
 
         app.add_systems(Startup, hud::setup_hud);
 
-        app.add_systems(Update, player_input::player_input_system.in_set(GameplaySet::AwaitingInput));
+        app.add_systems(Update, (player_input::player_input_system, movement::movement_system).chain().in_set(GameplaySet::AwaitingInput));
 
         app.add_systems(Update, (movement::movement_system,
-                                 collision::collision_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(GameplaySet::AwaitingInput)
@@ -32,7 +31,6 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Update, (random_move::random_system,
                                  movement::movement_system,
-                                 collision::collision_system,
                                  debug::debug_system,
                                  end_turn::end_turn_system)
             .chain()
