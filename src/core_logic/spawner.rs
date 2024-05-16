@@ -12,7 +12,7 @@ pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<Ass
     commands.spawn((
         Player::new(),
         GridPosition { x: spawn.x, y: spawn.y },
-        Health { current: 10, max: 20 },
+        Health { current: 10, max: 10 },
         Attacker::new(),
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
@@ -31,16 +31,44 @@ pub fn spawn_random_monsters(mut commands: Commands, map: Res<Map>, asset_server
         .for_each(|(pos, enemy_type)| spawn_enemy(&mut commands, enemy_type, pos.into(), &asset_server, &mut texture_atlas_layouts));
 }
 
+
+struct EnemyData {
+    pub hp: i32,
+    pub name: String,
+    pub sprite_id: i32,
+}
+
+impl EnemyData {
+    pub fn generate_by_type(enemy_type: &EnemyType) -> Self {
+        match enemy_type {
+            EnemyType::ETTIN => todo!(), //69
+            EnemyType::OGRE => todo!(), //79
+            EnemyType::GOBLIN => EnemyData::generate_goblin(),
+            EnemyType::ORC => EnemyData::generate_orc(),
+        }
+    }
+    pub fn generate_goblin() -> Self {
+        EnemyData {
+            hp: 1,
+            name: "Goblin".into(),
+            sprite_id: 103,
+        }
+    }
+
+    pub fn generate_orc() -> Self {
+        EnemyData {
+            hp: 2,
+            name: "Orc".into(),
+            sprite_id: 111,
+        }
+    }
+}
+
 fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPosition, asset_server: &Res<AssetServer>, texture_atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>) {
     let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
 
-    let sprite_index = match enemy_type {
-        EnemyType::ETTIN => 69,
-        EnemyType::OGRE => 79,
-        EnemyType::GOBLIN => 103,
-        EnemyType::ORC => 111,
-    };
+    let enemy_data = EnemyData::generate_by_type(&enemy_type);
 
     let hp_root = commands.spawn((EnemyHpRoot, SpriteBundle {
         sprite: Sprite {
@@ -64,7 +92,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
 
     commands.spawn((
         Enemy,
-        Health { current: 2, max: 2 },
+        Health { current: enemy_data.hp, max: enemy_data.hp },
         position,
         MovingRandomly,
         Attacker::new(),
@@ -73,7 +101,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
             transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
             atlas: TextureAtlas {
                 layout: texture_atlas_layout.clone(),
-                index: sprite_index,
+                index: enemy_data.sprite_id as usize,
             },
             ..default()
         })).push_children(&[hp_root, hp_bar]);

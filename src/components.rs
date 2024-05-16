@@ -64,11 +64,13 @@ pub enum EnemyType {
 
 impl Distribution<EnemyType> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> EnemyType {
-        match rng.gen_range(0..=3) {
-            0 => EnemyType::ETTIN,
-            1 => EnemyType::OGRE,
-            2 => EnemyType::ORC,
-            _ => EnemyType::GOBLIN
+        match rng.gen_range(0..10) {
+            0..=8 =>EnemyType::GOBLIN,
+            _ => EnemyType::ORC,
+            // 0 => EnemyType::ETTIN,
+            // 1 => EnemyType::OGRE,
+            // 2 => EnemyType::ORC,
+            // _ => EnemyType::GOBLIN
         }
     }
 }
