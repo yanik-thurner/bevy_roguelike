@@ -1,3 +1,5 @@
+#[allow(unused_imports)]
 use crate::prelude::*;
 
-pub fn debug_system(query: Query<&Transform, (With<EnemyHpBar>)>) {}
+#[allow(dead_code)]
+pub fn debug_system() {}

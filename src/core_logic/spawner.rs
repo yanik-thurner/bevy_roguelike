@@ -1,11 +1,7 @@
-use std::any::Any;
-use bevy::render::view::RenderLayers;
-use bevy::window::CursorIcon::Move;
 use rand::Rng;
 
 use crate::core_logic::map::Map;
 use crate::prelude::*;
-
 
 pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
     let spawn = map.spawn
@@ -15,7 +11,7 @@ pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<Ass
     commands.spawn((
         Player::new(),
         GridPosition { x: spawn.x, y: spawn.y },
-        Health { current: 10, max: 10 },
+        Health { before: 10, current: 10, max: 10 },
         Attacker::new(),
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
@@ -95,11 +91,12 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
 
     let mut cmds = commands.spawn((
         Enemy,
-        Health { current: enemy_data.hp, max: enemy_data.hp },
+        Health { before: enemy_data.hp, current: enemy_data.hp, max: enemy_data.hp },
         position,
         Attacker::new(),
         SpriteSheetBundle {
-            texture: asset_server.load("dungeonfont.png"),
+            texture: asset_server.load("dungeonfont.p\
+            ng"),
             transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
             atlas: TextureAtlas {
                 layout: texture_atlas_layout.clone(),

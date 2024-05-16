@@ -19,7 +19,7 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                            enemy_query: Query<(&GridPosition, Entity), With<Enemy>>,
                            mut turn_state: ResMut<NextState<TurnState>>,
                            mut ev_wants_to_move: EventWriter<WantsToMoveEvent>,
-                           mut ev_wants_to_attack: EventWriter<WantsToAttack>,
+                           mut ev_wants_to_attack: EventWriter<WantsToAttackEvent>,
 ) {
     let (entity, mut player, position, mut health) = player_query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
@@ -40,7 +40,11 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
         match delta {
             Some(GridPosition::ZERO) => {
                 player.move_cooldown.reset();
-                health.current = i32::min(health.max, health.current + 1);
+
+                if health.current == health.before {
+                    health.current = i32::min(health.max, health.current + 1);
+                }
+                health.before = health.current;
                 turn_state.set(TurnState::PlayerTurn);
             }
             Some(delta) => {
@@ -50,12 +54,12 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                 let target = enemy_query
                     .iter()
                     .filter(|(pos, _)| **pos == new_position)
-                    .map(|(position, enemy)| enemy)
+                    .map(|(_, enemy)| enemy)
                     .next();
 
 
                 if let Some(enemy) = target {
-                    ev_wants_to_attack.send(WantsToAttack { attacker: entity, victim: enemy });
+                    ev_wants_to_attack.send(WantsToAttackEvent { attacker: entity, victim: enemy });
                     turn_state.set(TurnState::PlayerTurn);
                 } else {
                     ev_wants_to_move.send(WantsToMoveEvent { entity, destination: new_position });

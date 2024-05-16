@@ -9,7 +9,7 @@ pub struct WantsToMoveEvent {
 }
 
 #[derive(Event)]
-pub struct WantsToAttack {
+pub struct WantsToAttackEvent {
     pub attacker: Entity,
     pub victim: Entity,
 }

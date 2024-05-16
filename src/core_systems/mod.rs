@@ -12,6 +12,7 @@ mod debug;
 mod hud_enemies;
 mod combat;
 mod animation;
+mod chasing;
 
 pub struct CoreSystems;
 
@@ -19,7 +20,7 @@ impl Plugin for CoreSystems {
     fn build(&self, app: &mut App) {
         app.insert_state(TurnState::AwaitingInput);
         app.add_event::<WantsToMoveEvent>();
-        app.add_event::<WantsToAttack>();
+        app.add_event::<WantsToAttackEvent>();
 
         app.add_systems(Startup, hud::setup_hud);
 
@@ -33,6 +34,7 @@ impl Plugin for CoreSystems {
             .in_set(GameplaySet::PlayerTurn));
 
         app.add_systems(Update, (random_move::random_system,
+                                 chasing::chase_player_system,
                                  movement::movement_system,
                                  combat::combat_system,
                                  end_turn::end_turn_system)

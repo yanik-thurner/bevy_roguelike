@@ -65,7 +65,7 @@ pub enum EnemyType {
 impl Distribution<EnemyType> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> EnemyType {
         match rng.gen_range(0..10) {
-            0..=8 =>EnemyType::GOBLIN,
+            0..=8 => EnemyType::GOBLIN,
             _ => EnemyType::ORC,
             // 0 => EnemyType::ETTIN,
             // 1 => EnemyType::OGRE,
@@ -89,6 +89,7 @@ pub struct PlayerCamera;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct Health {
+    pub before: i32,
     pub current: i32,
     pub max: i32,
 }
