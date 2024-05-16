@@ -75,7 +75,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
             custom_size: Some(Vec2::new(SPRITE_SIZE, 2.0)),
             ..default()
         },
-        transform: Transform::from_xyz(0.0, 16.0, 3.0),
+        transform: Transform::from_xyz(0.0, 16.0, 4.0),
         ..default()
     })).id();
 
@@ -85,7 +85,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
             custom_size: Some(Vec2::new(SPRITE_SIZE, 2.0)),
             ..default()
         },
-        transform: Transform::from_xyz(0.0, 16.0, 3.0),
+        transform: Transform::from_xyz(0.0, 16.0, 5.0),
         ..default()
     })).id();
 
