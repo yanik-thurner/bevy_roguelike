@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-use std::fmt::format;
-use bevy::utils::petgraph::visit::Walker;
 use crate::components::map::{Map, MAP_HEIGHT};
 use crate::prelude::*;
 use crate::prelude::map::MAP_WIDTH;
@@ -15,6 +12,7 @@ fn get_possible_next_positions(current_position: &GridPosition) -> [GridPosition
     ]
 }
 
+#[allow(dead_code)]
 fn print_dijkstra(dijkstra_map: &[[Option<u32>; MAP_WIDTH]; MAP_HEIGHT]) {
     for y in (0..MAP_HEIGHT).rev() {
         for x in 0..MAP_WIDTH {
