@@ -32,7 +32,7 @@ impl Plugin for CoreSystems {
             .after(GameplaySet::AwaitingInput)
             .in_set(GameplaySet::PlayerTurn));
 
-        app.add_systems(Update, (//random_move::random_system,
+        app.add_systems(Update, (random_move::random_system,
                                  movement::movement_system,
                                  combat::combat_system,
                                  end_turn::end_turn_system)

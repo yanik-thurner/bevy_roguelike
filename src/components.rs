@@ -86,8 +86,6 @@ impl Player {
 #[derive(Component)]
 pub struct PlayerCamera;
 
-#[derive(Component)]
-pub struct MovingRandomly;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct Health {
@@ -103,6 +101,9 @@ pub struct EnemyHpBar;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct ChasingPlayer;
+
+#[derive(Component)]
+pub struct MovingRandomly;
 
 #[derive(Component, Clone, Debug, PartialEq)]
 pub struct Attacker {

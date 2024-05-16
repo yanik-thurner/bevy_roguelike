@@ -1,4 +1,7 @@
+use std::any::Any;
 use bevy::render::view::RenderLayers;
+use bevy::window::CursorIcon::Move;
+use rand::Rng;
 
 use crate::core_logic::map::Map;
 use crate::prelude::*;
@@ -90,11 +93,10 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
         ..default()
     })).id();
 
-    commands.spawn((
+    let mut cmds = commands.spawn((
         Enemy,
         Health { current: enemy_data.hp, max: enemy_data.hp },
         position,
-        MovingRandomly,
         Attacker::new(),
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
@@ -104,7 +106,14 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
                 index: enemy_data.sprite_id as usize,
             },
             ..default()
-        })).push_children(&[hp_root, hp_bar]);
+        }));
+
+    match rand::thread_rng().gen_range(0..10) {
+        0..=8 => cmds.insert(ChasingPlayer),
+        _ => cmds.insert(MovingRandomly),
+    };
+
+    cmds.push_children(&[hp_root, hp_bar]);
 }
 
 #[allow(dead_code)]
