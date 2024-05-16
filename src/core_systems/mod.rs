@@ -10,6 +10,7 @@ mod movement;
 mod hud;
 mod debug;
 mod hud_enemies;
+mod combat;
 
 pub struct CoreSystems;
 
@@ -21,9 +22,10 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Startup, hud::setup_hud);
 
-        app.add_systems(Update, (player_input::player_input_system, movement::movement_system).chain().in_set(GameplaySet::AwaitingInput));
+        app.add_systems(Update, player_input::player_input_system.in_set(GameplaySet::AwaitingInput));
 
         app.add_systems(Update, (movement::movement_system,
+                                 combat::combat_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(GameplaySet::AwaitingInput)
@@ -31,7 +33,7 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Update, (random_move::random_system,
                                  movement::movement_system,
-                                 debug::debug_system,
+                                 combat::combat_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(GameplaySet::AwaitingInput)

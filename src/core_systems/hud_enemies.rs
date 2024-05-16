@@ -6,7 +6,7 @@ pub fn update_enemy_hud(health_query: Query<(&Health), With<Enemy>>, mut health_
         let target_health = health_query.get(parent.get());
         if let Some(target_health) = target_health.ok() {
             transform.scale.x = target_health.current as f32 / target_health.max as f32;
-            transform.translation.x = -(SPRITE_SIZE / 2.0 * transform.scale.x);
+            transform.translation.x = (SPRITE_SIZE / 2.0 * transform.scale.x) - (SPRITE_SIZE / 2.0);
         }
     }
 }

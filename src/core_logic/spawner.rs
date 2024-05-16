@@ -60,7 +60,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
 
     commands.spawn((
         Enemy,
-        Health { current: 1, max: 2 },
+        Health { current: 2, max: 2 },
         position,
         MovingRandomly,
         SpriteSheetBundle {
