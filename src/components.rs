@@ -98,3 +98,24 @@ pub struct EnemyHpRoot;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct EnemyHpBar;
+
+#[derive(Component, Clone, Copy, Debug, PartialEq)]
+pub struct ChasingPlayer;
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct Attacker {
+    pub cooldown: Timer,
+    pub attack: Option<Entity>,
+}
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct Attack;
+
+impl Attacker {
+    pub fn new() -> Self {
+        Attacker {
+            cooldown: Timer::from_seconds(0.1, TimerMode::Once),
+            attack: None,
+        }
+    }
+}
