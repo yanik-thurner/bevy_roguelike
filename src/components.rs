@@ -3,7 +3,7 @@ use rand::prelude::IndexedRandom;
 
 pub use crate::prelude::*;
 
-#[derive(Component, Clone, Copy, Debug, PartialEq)]
+#[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct GridPosition
 {
     pub x: i32,

@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use crate::system_sets::GameplaySet;
+use crate::system_sets::{GameplaySet, ParallelSet};
 
 mod player_input;
 mod sync_grid;
@@ -24,12 +24,13 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Startup, hud::setup_hud);
 
-        app.add_systems(Update, player_input::player_input_system.in_set(GameplaySet::AwaitingInput));
+        app.add_systems(Update, player_input::player_input_system.after(ParallelSet).in_set(GameplaySet::AwaitingInput));
 
         app.add_systems(Update, (movement::movement_system,
                                  combat::combat_system,
                                  end_turn::end_turn_system)
             .chain()
+            .after(ParallelSet)
             .after(GameplaySet::AwaitingInput)
             .in_set(GameplaySet::PlayerTurn));
 
@@ -39,16 +40,16 @@ impl Plugin for CoreSystems {
                                  combat::combat_system,
                                  end_turn::end_turn_system)
             .chain()
+            .after(ParallelSet)
             .after(GameplaySet::AwaitingInput)
             .after(GameplaySet::PlayerTurn)
             .in_set(GameplaySet::MonsterTurn));
 
-        app.add_systems(Update, sync_grid::sync_grid_system.after(player_input::player_input_system));
-        app.add_systems(Update, sync_cam::sync_cam_system.after(sync_grid::sync_grid_system));
-        app.add_systems(Update, animation::combat_animation_system);
-        app.add_systems(Update, hud::update_healthbar);
-        app.add_systems(Update, hud_enemies::update_enemy_hud);
-
+        app.add_systems(Update, (sync_grid::sync_grid_system,
+                                 sync_cam::sync_cam_system.after(sync_grid::sync_grid_system),
+                                 animation::combat_animation_system,
+                                 hud::update_healthbar,
+                                 hud_enemies::update_enemy_hud.after(sync_cam::sync_cam_system)).in_set(ParallelSet));
 
         app.configure_sets(Update, (
             GameplaySet::AwaitingInput.run_if(in_state(TurnState::AwaitingInput)),
