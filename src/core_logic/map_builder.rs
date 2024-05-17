@@ -1,3 +1,4 @@
+use bevy::reflect::Tuple;
 use rand::prelude::ThreadRng;
 use rand::Rng;
 
@@ -17,9 +18,7 @@ pub fn system(mut commands: Commands, asset_server: Res<AssetServer>, mut textur
     let mut map_builder = MapBuilder::new();
     let map = map_builder.build(&mut rng);
 
-
     commands.insert_resource(map);
-
 
     let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
@@ -55,8 +54,22 @@ impl MapBuilder {
         self.fill(TileType::Wall);
         self.build_random_rooms(rng);
         self.build_corridors(rng);
-        self.map.spawn = self.rooms[0].center().into();
+        self.map.spawn_player = self.rooms[0].center().into();
         self.map.rooms = self.rooms.clone();
+
+        let dijkstra_map = path_finding::create_dijkstra_map(&self.map, &self.map.spawn_player);
+
+        if let Some((x, y, _)) = dijkstra_map.iter().enumerate()
+            .flat_map(
+                |(col, row_values)| {
+                    row_values.iter().enumerate().filter_map(move |(row, &val)| {
+                        val.map(|v| (row, col, v))
+                    })
+                })
+            .max_by_key(|&(_, _, val)| val) {
+            self.map.spawn_amulet = GridPosition::new(x as i32, y as i32);
+        }
+
         self.map.clone()
     }
     fn fill(&mut self, tile: TileType) {

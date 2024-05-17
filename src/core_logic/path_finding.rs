@@ -19,7 +19,7 @@ fn print_dijkstra(dijkstra_map: &[[Option<u32>; MAP_WIDTH]; MAP_HEIGHT]) {
     println!("--------------");
 }
 
-pub fn create_dijkstra_map(map: &Res<Map>, start_position: &GridPosition) -> [[Option<u32>; MAP_WIDTH]; MAP_HEIGHT] {
+pub fn create_dijkstra_map(map: &Map, start_position: &GridPosition) -> [[Option<u32>; MAP_WIDTH]; MAP_HEIGHT] {
     let mut dijkstra_map: [[Option<u32>; MAP_WIDTH]; MAP_HEIGHT] = [[None; MAP_WIDTH]; MAP_HEIGHT];
 
     recurse_traverse_map(&mut dijkstra_map, map, start_position, 0);

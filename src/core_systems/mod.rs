@@ -1,5 +1,5 @@
 use bevy::ecs::schedule::SystemConfigs;
-use crate::core_systems::menu_screens::GameOverScreen;
+use crate::core_systems::menu_screens::GameEndScreen;
 use crate::prelude::*;
 use crate::system_sets::{GameplaySet, InitSet, ParallelSet};
 
@@ -28,7 +28,7 @@ fn setup_camera(mut commands: Commands) {
 }
 
 fn init_system_bundle() -> SystemConfigs {
-    (teardown::teardown, map_builder::system, spawner::spawn_player, spawner::spawn_random_monsters, hud::setup_hud, end_turn::end_turn_system)
+    (teardown::teardown, map_builder::system, spawner::spawn_player, spawner::spawn_amulet_of_yala, spawner::spawn_random_monsters, hud::setup_hud, end_turn::end_turn_system)
         .chain()
         .in_set(InitSet)
         .before(GameplaySet::AwaitingInput)
@@ -46,8 +46,9 @@ impl Plugin for CoreSystems {
         app.add_systems(Startup, setup_camera);
         app.add_systems(OnEnter(TurnState::Init), init_system_bundle());
         app.add_systems(OnEnter(TurnState::GameOver), (teardown::teardown, menu_screens::game_over_screen).chain());
+        app.add_systems(OnEnter(TurnState::Victory), (teardown::teardown, menu_screens::victory_screen).chain());
 
-        app.add_systems(Update, menu_screens::game_over_system.run_if(in_state(TurnState::GameOver)));
+        app.add_systems(Update, menu_screens::game_end_system.run_if(in_state(TurnState::GameOver).or_else(in_state(TurnState::Victory))));
 
         app.add_systems(Update, player_input::player_input_system.after(ParallelSet).in_set(GameplaySet::AwaitingInput));
 

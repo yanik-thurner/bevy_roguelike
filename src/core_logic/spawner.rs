@@ -4,7 +4,7 @@ use crate::core_logic::map::Map;
 use crate::prelude::*;
 
 pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
-    let spawn = map.spawn
+    let spawn = map.spawn_player
         ;
     let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
@@ -95,8 +95,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
         position,
         Attacker::new(),
         SpriteSheetBundle {
-            texture: asset_server.load("dungeonfont.p\
-            ng"),
+            texture: asset_server.load("dungeonfont.png"),
             transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
             atlas: TextureAtlas {
                 layout: texture_atlas_layout.clone(),
@@ -116,4 +115,19 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
 #[allow(dead_code)]
 pub fn spawn_monster(mut commands: Commands, enemy_type: EnemyType, position: GridPosition, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
     spawn_enemy(&mut commands, enemy_type, position, &asset_server, &mut texture_atlas_layouts);
+}
+
+pub fn spawn_amulet_of_yala(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
+    let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
+    let texture_atlas_layout = texture_atlas_layouts.add(layout);
+
+    commands.spawn((Item, AmuletOfYala, map.spawn_amulet, SpriteSheetBundle {
+        texture: asset_server.load("dungeonfont.png"),
+        transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
+        atlas: TextureAtlas {
+            layout: texture_atlas_layout.clone(),
+            index: 124,
+        },
+        ..default()
+    }));
 }

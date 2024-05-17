@@ -123,3 +123,9 @@ impl Attacker {
         }
     }
 }
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct Item;
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct AmuletOfYala;

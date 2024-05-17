@@ -13,7 +13,8 @@ pub enum TileType {
 #[derive(Resource, Clone)]
 pub struct Map {
     pub tiles: Vec<TileType>,
-    pub spawn: GridPosition,
+    pub spawn_player: GridPosition,
+    pub spawn_amulet: GridPosition,
     pub rooms: Vec<Rect>,
 }
 
@@ -21,8 +22,9 @@ impl Map {
     pub fn new() -> Self {
         Map {
             tiles: vec![TileType::Floor; NUM_TILES],
-            spawn: GridPosition::new(0, 0),
-            rooms: Vec::new()
+            spawn_player: GridPosition::new(0, 0),
+            spawn_amulet: GridPosition::new(0, 0),
+            rooms: Vec::new(),
         }
     }
 
