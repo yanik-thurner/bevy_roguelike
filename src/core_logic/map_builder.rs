@@ -25,10 +25,12 @@ pub fn system(mut commands: Commands, asset_server: Res<AssetServer>, mut textur
     for y in 0..MAP_HEIGHT {
         for x in 0..MAP_WIDTH {
             commands.spawn((
+                WallOrFloor,
                 GridPosition { x: x as i32, y: y as i32 },
                 SpriteSheetBundle {
                     texture: asset_server.load("dungeonfont.png"),
                     transform: Transform::from_xyz((x * 32) as f32, (y * 32) as f32, 0.0),
+                    visibility: Visibility::Hidden,
                     atlas: TextureAtlas {
                         layout: texture_atlas_layout.clone(),
                         index: if map_builder.map.tiles[map_index(x as i32, y as i32)] == TileType::Wall { SPRITE_SHEET_WALL } else { SPRITE_SHEET_FLOOR },
@@ -49,6 +51,41 @@ impl MapBuilder {
         mb
     }
 
+    fn build_fov_test(&mut self) -> Map {
+        self.fill(TileType::Floor);
+        let x = MAP_WIDTH as i32 / 2;
+        let y = MAP_HEIGHT as i32 / 2;
+        self.map.spawn_player = GridPosition::new(x, y);
+        self.map.tiles[map_index(x - 4, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x - 3, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x - 2, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x - 1, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x + 0, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x + 1, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x + 2, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x + 3, y + 3)] = TileType::Wall;
+        self.map.tiles[map_index(x + 3, y + 2)] = TileType::Wall;
+        self.map.tiles[map_index(x + 3, y + 1)] = TileType::Wall;
+        self.map.tiles[map_index(x + 4, y + 1)] = TileType::Wall;
+
+        self.map.tiles[map_index(x + 3, y - 1)] = TileType::Wall;
+        self.map.tiles[map_index(x + 4, y - 1)] = TileType::Wall;
+        self.map.tiles[map_index(x + 4, y - 2)] = TileType::Wall;
+        self.map.tiles[map_index(x + 3, y - 2)] = TileType::Wall;
+        self.map.tiles[map_index(x + 2, y - 2)] = TileType::Wall;
+
+        self.map.tiles[map_index(x - 0, y - 2)] = TileType::Wall;
+        self.map.tiles[map_index(x - 1, y - 2)] = TileType::Wall;
+        self.map.tiles[map_index(x - 2, y - 2)] = TileType::Wall;
+        self.map.tiles[map_index(x - 2, y - 3)] = TileType::Wall;
+        self.map.tiles[map_index(x - 2, y - 4)] = TileType::Wall;
+
+        self.map.tiles[map_index(x - 2, y - 0)] = TileType::Wall;
+        self.map.tiles[map_index(x - 2, y + 1)] = TileType::Wall;
+        self.map.tiles[map_index(x - 3, y + 1)] = TileType::Wall;
+        self.map.tiles[map_index(x - 4, y + 1)] = TileType::Wall;
+        self.map.clone()
+    }
     fn build(&mut self, rng: &mut ThreadRng) -> Map {
         self.fill(TileType::Wall);
         self.build_random_rooms(rng);

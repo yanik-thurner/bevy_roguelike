@@ -10,12 +10,15 @@ fn get_possible_next_positions(current_position: &GridPosition) -> [GridPosition
 }
 
 
-pub fn chase_player_system(map: Res<Map>, player_query: Query<(Entity, &GridPosition), With<Player>>, enemy_query: Query<(Entity, &GridPosition), (With<Enemy>, With<ChasingPlayer>, Without<Player>)>, mut ev_move: EventWriter<WantsToMoveEvent>, mut ev_attack: EventWriter<WantsToAttackEvent>) {
+pub fn chase_player_system(map: Res<Map>, player_query: Query<(Entity, &GridPosition), With<Player>>, enemy_query: Query<(Entity, &GridPosition, &FieldOfView), (With<Enemy>, With<ChasingPlayer>, Without<Player>)>, mut ev_move: EventWriter<WantsToMoveEvent>, mut ev_attack: EventWriter<WantsToAttackEvent>) {
     let (player, player_position) = player_query.get_single().unwrap();
 
     let dijkstra_map = path_finding::create_dijkstra_map(&map, player_position);
 
-    for (enemy, enemy_position) in enemy_query.iter() {
+    for (enemy, enemy_position, fov) in enemy_query.iter() {
+        if !fov.visible_tiles.contains(player_position) {
+            continue;
+        }
         let possible_next_positions = get_possible_next_positions(enemy_position);
         let (next_position, next_x, next_y) = possible_next_positions.iter()
             .map(|pos| (pos, pos.x as usize, pos.y as usize))

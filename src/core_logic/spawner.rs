@@ -13,6 +13,7 @@ pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<Ass
         GridPosition { x: spawn.x, y: spawn.y },
         Health { before: 10, current: 10, max: 10 },
         Attacker::new(),
+        FieldOfView::new(4),
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
             transform: Transform { translation: Vec3::new(0.0, 0.0, 1.0), ..default() },
@@ -95,9 +96,11 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
         Health { before: enemy_data.hp, current: enemy_data.hp, max: enemy_data.hp },
         position,
         Attacker::new(),
+        FieldOfView::new(6),
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
             transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
+            visibility: Visibility::Hidden,
             atlas: TextureAtlas {
                 layout: texture_atlas_layout.clone(),
                 index: enemy_data.sprite_id as usize,
@@ -125,6 +128,7 @@ pub fn spawn_amulet_of_yala(mut commands: Commands, map: Res<Map>, asset_server:
     commands.spawn((Item, AmuletOfYala, map.spawn_amulet, SpriteSheetBundle {
         texture: asset_server.load("dungeonfont.png"),
         transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
+        visibility: Visibility::Hidden,
         atlas: TextureAtlas {
             layout: texture_atlas_layout.clone(),
             index: 124,

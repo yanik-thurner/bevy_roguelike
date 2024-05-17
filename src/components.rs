@@ -1,3 +1,4 @@
+use bevy::utils::HashSet;
 use rand::{distributions::{Distribution, Standard}, Rng, thread_rng};
 use rand::prelude::IndexedRandom;
 
@@ -129,3 +130,34 @@ pub struct Item;
 
 #[derive(Component, Clone, Debug, PartialEq)]
 pub struct AmuletOfYala;
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct FieldOfView {
+    pub visible_tiles: HashSet<GridPosition>,
+    pub radius: usize,
+    pub is_dirty: bool,
+}
+
+impl FieldOfView {
+    pub fn new(radius: usize) -> Self {
+        Self {
+            visible_tiles: HashSet::new(),
+            radius,
+            is_dirty: true,
+        }
+    }
+
+    pub fn clone_dirty(&self) -> Self {
+        Self {
+            visible_tiles: HashSet::new(),
+            radius: self.radius,
+            is_dirty: true,
+        }
+    }
+}
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct Revealed;
+
+#[derive(Component, Clone, Debug, PartialEq)]
+pub struct WallOrFloor;

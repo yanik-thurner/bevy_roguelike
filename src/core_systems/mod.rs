@@ -17,6 +17,7 @@ mod animation;
 mod chasing;
 mod menu_screens;
 mod teardown;
+mod fov;
 
 pub struct CoreSystems;
 
@@ -50,10 +51,11 @@ impl Plugin for CoreSystems {
 
         app.add_systems(Update, menu_screens::game_end_system.run_if(in_state(TurnState::GameOver).or_else(in_state(TurnState::Victory))));
 
-        app.add_systems(Update, player_input::player_input_system.after(ParallelSet).in_set(GameplaySet::AwaitingInput));
+        app.add_systems(Update, (player_input::player_input_system, fov::fov_system).after(ParallelSet).in_set(GameplaySet::AwaitingInput));
 
         app.add_systems(Update, (movement::movement_system,
                                  combat::combat_system,
+                                 fov::fov_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(ParallelSet)
@@ -64,6 +66,7 @@ impl Plugin for CoreSystems {
                                  chasing::chase_player_system,
                                  movement::movement_system,
                                  combat::combat_system,
+                                 fov::fov_system,
                                  end_turn::end_turn_system)
             .chain()
             .after(ParallelSet)
