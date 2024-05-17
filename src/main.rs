@@ -23,14 +23,8 @@ mod prelude {
     pub const SPRITE_SHEET_FLOOR: usize = 46;
 }
 
-fn setup(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
-    camera.transform.scale /= 1.0;
 
-    commands.spawn((PlayerCamera, camera));
-}
-
-fn bevy_main() {
+fn main() {
     App::new()
         // Enable ambiguity warnings for the Update schedule
         .edit_schedule(Update, |schedule| {
@@ -40,13 +34,7 @@ fn bevy_main() {
             });
         })
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_systems(Startup, (setup, map_builder::system, spawner::spawn_player, spawner::spawn_random_monsters).chain())
         .add_plugins(CoreSystems)
         .insert_resource(Msaa::Off)
         .run();
-}
-
-fn main() {
-    //breakout::main();
-    bevy_main();
 }

@@ -1,6 +1,9 @@
 use crate::components::SystemSet;
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct InitSet;
+
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GameplaySet {
     AwaitingInput,
     PlayerTurn,

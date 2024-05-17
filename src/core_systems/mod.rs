@@ -1,5 +1,7 @@
+use bevy::ecs::schedule::SystemConfigs;
+use crate::core_systems::menu_screens::GameOverScreen;
 use crate::prelude::*;
-use crate::system_sets::{GameplaySet, ParallelSet};
+use crate::system_sets::{GameplaySet, InitSet, ParallelSet};
 
 mod player_input;
 mod sync_grid;
@@ -13,16 +15,39 @@ mod hud_enemies;
 mod combat;
 mod animation;
 mod chasing;
+mod menu_screens;
+mod teardown;
 
 pub struct CoreSystems;
 
+fn setup_camera(mut commands: Commands) {
+    let mut camera = Camera2dBundle::default();
+    camera.transform.scale /= 1.0;
+
+    commands.spawn((PlayerCamera, camera));
+}
+
+fn init_system_bundle() -> SystemConfigs {
+    (teardown::teardown, map_builder::system, spawner::spawn_player, spawner::spawn_random_monsters, hud::setup_hud, end_turn::end_turn_system)
+        .chain()
+        .in_set(InitSet)
+        .before(GameplaySet::AwaitingInput)
+        .before(GameplaySet::PlayerTurn)
+        .before(GameplaySet::MonsterTurn)
+        .before(ParallelSet)
+}
+
 impl Plugin for CoreSystems {
     fn build(&self, app: &mut App) {
-        app.insert_state(TurnState::AwaitingInput);
+        app.insert_state(TurnState::Init);
         app.add_event::<WantsToMoveEvent>();
         app.add_event::<WantsToAttackEvent>();
 
-        app.add_systems(Startup, hud::setup_hud);
+        app.add_systems(Startup, setup_camera);
+        app.add_systems(OnEnter(TurnState::Init), init_system_bundle());
+        app.add_systems(OnEnter(TurnState::GameOver), (teardown::teardown, menu_screens::game_over_screen).chain());
+
+        app.add_systems(Update, menu_screens::game_over_system.run_if(in_state(TurnState::GameOver)));
 
         app.add_systems(Update, player_input::player_input_system.after(ParallelSet).in_set(GameplaySet::AwaitingInput));
 
@@ -55,6 +80,9 @@ impl Plugin for CoreSystems {
             GameplaySet::AwaitingInput.run_if(in_state(TurnState::AwaitingInput)),
             GameplaySet::PlayerTurn.run_if(in_state(TurnState::PlayerTurn)),
             GameplaySet::MonsterTurn.run_if(in_state(TurnState::MonsterTurn)),
+            ParallelSet.run_if(in_state(TurnState::AwaitingInput)
+                .or_else(in_state(TurnState::PlayerTurn))
+                .or_else(in_state(TurnState::MonsterTurn))),
         ));
     }
 }

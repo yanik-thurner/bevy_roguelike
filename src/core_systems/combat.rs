@@ -31,7 +31,7 @@ pub fn combat_system(mut commands: Commands, mut ev_attack: EventReader<WantsToA
 
         victim_health.before = victim_health.current;
         victim_health.current -= 1;
-        if victim_health.current < 1 {
+        if victim_health.current < 1 && *victim != player {
             commands.entity(*victim).despawn_recursive();
         }
     });
