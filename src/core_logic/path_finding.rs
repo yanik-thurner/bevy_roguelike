@@ -1,6 +1,5 @@
-use crate::components::{GridPosition, Res};
+use crate::components::GridPosition;
 use crate::components::map::{Map, MAP_HEIGHT, MAP_WIDTH};
-
 
 const DIRECTIONS: [GridPosition; 4] = [GridPosition::NORTH, GridPosition::EAST, GridPosition::SOUTH, GridPosition::WEST];
 

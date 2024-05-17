@@ -1,7 +1,5 @@
-use crate::components::map::{Map, MAP_HEIGHT};
+use crate::components::map::Map;
 use crate::prelude::*;
-use crate::prelude::map::MAP_WIDTH;
-
 
 fn get_possible_next_positions(current_position: &GridPosition) -> [GridPosition; 4] {
     [GridPosition::new(current_position.x + 1, current_position.y),

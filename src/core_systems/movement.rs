@@ -1,5 +1,5 @@
-use std::collections::HashSet;
 use bevy::utils::HashMap;
+
 use crate::components::map::Map;
 use crate::events::WantsToMoveEvent;
 use crate::prelude::*;

@@ -33,6 +33,7 @@ pub fn spawn_random_monsters(mut commands: Commands, map: Res<Map>, asset_server
 
 struct EnemyData {
     pub hp: i32,
+    #[allow(dead_code)]
     pub name: String,
     pub sprite_id: i32,
 }

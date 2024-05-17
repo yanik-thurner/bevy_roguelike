@@ -1,6 +1,3 @@
-use bevy::input::keyboard::{keyboard_input_system, KeyboardInput};
-use bevy::text::TextLayoutInfo;
-use crate::components::map::Map;
 use crate::prelude::*;
 
 #[derive(Component)]
