@@ -30,16 +30,16 @@ impl Map {
         }
     }
 
-    pub fn in_bounds(&self, point: GridPosition) -> bool {
+    pub fn in_bounds(&self, point: &GridPosition) -> bool {
         point.x >= 0 && point.x < MAP_WIDTH.try_into().unwrap()
             && point.y >= 0 && point.y < MAP_HEIGHT.try_into().unwrap()
     }
 
-    pub fn can_enter_tile(&self, point: GridPosition) -> bool {
+    pub fn can_enter_tile(&self, point: &GridPosition) -> bool {
         self.in_bounds(point) && self.tiles[map_index(point.x as i32, point.y as i32)] == TileType::Floor
     }
 
-    pub fn try_idx(&self, point: GridPosition) -> Option<usize> {
+    pub fn try_idx(&self, point: &GridPosition) -> Option<usize> {
         if self.in_bounds(point) {
             Option::Some(map_index(point.x as i32, point.y as i32))
         } else {
