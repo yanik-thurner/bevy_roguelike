@@ -1,7 +1,5 @@
 use bevy::utils::HashSet;
-use crate::components::map::{Map, TileType};
 use crate::prelude::*;
-use crate::prelude::map::map_index;
 
 fn generate_circle_points(center: &GridPosition, radius: usize) -> HashSet<(i32, i32)> {
     let mut points = HashSet::new();
@@ -46,10 +44,9 @@ fn dda_line(x0: i32, y0: i32, x1: i32, y1: i32, result_set: &mut HashSet<GridPos
     let mut y = y0 as f32;
 
     for _ in 0..=steps as i32 {
-        println!("{:?}", map_index(x.round() as i32, y.round() as i32));
         let next_position = GridPosition::new(x.round() as i32, y.round() as i32);
         result_set.insert(next_position);
-        if !map.in_bounds(&next_position) || map.tiles[map_index(next_position.x, next_position.y)] == TileType::Wall {
+        if map.try_get_tile_type(&next_position) == Some(TileType::Wall) {
             break;
         }
         x += x_inc;
@@ -69,7 +66,7 @@ fn bresenham_line(mut x0: i32, mut y0: i32, x1: i32, y1: i32, result_set: &mut H
     loop {
         let new_position = GridPosition::new(x0, y0);
         result_set.insert(new_position);
-        if (x0 == x1 && y0 == y1) || !map.in_bounds(&new_position) || map.tiles[map_index(x0, y0)] == TileType::Wall { break; }
+        if (x0 == x1 && y0 == y1) || map.try_get_tile_type(&new_position) == Some(TileType::Wall) { break; }
         let e2 = 2 * err;
         if e2 > -dy {
             err -= dy;
@@ -98,12 +95,12 @@ fn field_of_view_set(center: &GridPosition, radius: usize, map: &Map) -> HashSet
     visible_points
 }
 
-pub fn fov_system(mut views: Query<(&Position, &mut FieldOfView)>, mut map: ResMut<Map>) {
+pub fn fov_system(mut views: Query<(&Position, &mut FieldOfView)>, mut map: ResMut<MapResource>) {
     views.iter_mut()
         .filter(|(_, fov)| fov.is_dirty)
         .for_each(|(pos, mut fov)| {
-            fov.visible_tiles = field_of_view_set(pos.get(), fov.radius, &map);
-            fov.visible_tiles.iter().for_each(|pos| map.revealed[map_index(pos.x, pos.y)] = true);
+            fov.visible_tiles = field_of_view_set(&pos.0, fov.radius, &map.0);
+            fov.visible_tiles.iter().for_each(|pos| { let _ = map.0.reveal(&pos); });
 
             fov.is_dirty = false;
         }

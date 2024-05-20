@@ -1,5 +1,4 @@
 use std::ops::{Add, AddAssign};
-use bevy::math::Vec2;
 
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -125,21 +124,5 @@ impl AddAssign<&GridDirection> for GridPosition {
 impl AddAssign<GridDirection> for GridPosition {
     fn add_assign(&mut self, rhs: GridDirection) {
         *self += &rhs
-    }
-}
-
-
-impl From<Vec2> for GridPosition {
-    fn from(value: Vec2) -> Self {
-        GridPosition {
-            x: value.x as i32,
-            y: value.y as i32,
-        }
-    }
-}
-
-impl Into<Vec2> for GridPosition {
-    fn into(self) -> Vec2 {
-        return Vec2::new(self.x as f32, self.y as f32);
     }
 }

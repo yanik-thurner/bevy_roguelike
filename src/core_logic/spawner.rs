@@ -1,35 +1,12 @@
-use crate::core_logic::map::Map;
 use crate::prelude::*;
 
-pub fn spawn_player(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
-    let spawn = map.spawn_player
-        ;
-    let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
-    let texture_atlas_layout = texture_atlas_layouts.add(layout);
-    commands.spawn((
-        Player::new(),
-        Position::new(spawn.x, spawn.y),
-        Health { before: 10, current: 10, max: 10 },
-        Attacker::new(),
-        FieldOfView::new(4),
-        SpriteSheetBundle {
-            texture: asset_server.load("dungeonfont.png"),
-            transform: Transform { translation: Vec3::new(0.0, 0.0, 1.0), ..default() },
-            atlas: TextureAtlas {
-                layout: texture_atlas_layout.clone(),
-                index: 64,
-            },
-            ..default()
-        }));
-}
-
-pub fn spawn_random_monsters(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>, mut global_rng: GRng) {
-    map.rooms.iter().skip(1)
-        .map(|r| (r.center(), match RngHelper::generate_from_range(global_rng.next_u32(), 0..10) {
-            0..=8 => EnemyType::GOBLIN,
-            _ => EnemyType::ORC
-        }))
-        .for_each(|(pos, enemy_type)| spawn_enemy(&mut commands, enemy_type, pos.into(), &asset_server, &mut texture_atlas_layouts));
+pub fn spawn_random_monsters(mut commands: Commands, map: Res<MapResource>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>, mut global_rng: GRng) {
+    // map.0.rooms.iter().skip(1)
+    //     .map(|r| (r.center(), match RngHelper::generate_from_range(global_rng.next_u32(), 0..10) {
+    //         0..=8 => EnemyType::GOBLIN,
+    //         _ => EnemyType::ORC
+    //     }))
+    //     .for_each(|(pos, enemy_type)| spawn_enemy(&mut commands, enemy_type, pos.into(), &asset_server, &mut texture_atlas_layouts));
 }
 
 
@@ -94,8 +71,8 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
 
     let mut cmds = commands.spawn((
         Enemy,
-        Health { before: enemy_data.hp, current: enemy_data.hp, max: enemy_data.hp },
-        Position::from_grid_position(position),
+        Health::new(enemy_data.hp),
+        Position(position),
         Attacker::new(),
         FieldOfView::new(6),
         ChasingPlayer,
@@ -118,18 +95,18 @@ pub fn spawn_monster(mut commands: Commands, enemy_type: EnemyType, position: Gr
     spawn_enemy(&mut commands, enemy_type, position, &asset_server, &mut texture_atlas_layouts);
 }
 
-pub fn spawn_amulet_of_yala(mut commands: Commands, map: Res<Map>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
-    let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
-    let texture_atlas_layout = texture_atlas_layouts.add(layout);
-
-    commands.spawn((Item, AmuletOfYala, Position::from_grid_position(map.spawn_amulet), SpriteSheetBundle {
-        texture: asset_server.load("dungeonfont.png"),
-        transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
-        visibility: Visibility::Hidden,
-        atlas: TextureAtlas {
-            layout: texture_atlas_layout.clone(),
-            index: 124,
-        },
-        ..default()
-    }));
+pub fn spawn_amulet_of_yala(mut commands: Commands, map: Res<MapResource>, asset_server: Res<AssetServer>, mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>) {
+    // let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
+    // let texture_atlas_layout = texture_atlas_layouts.add(layout);
+    //
+    // commands.spawn((Item, AmuletOfYala, Position::from_grid_position(map.spawn_amulet), SpriteSheetBundle {
+    //     texture: asset_server.load("dungeonfont.png"),
+    //     transform: Transform { translation: Vec3::new(0.0, 0.0, 2.0), ..default() },
+    //     visibility: Visibility::Hidden,
+    //     atlas: TextureAtlas {
+    //         layout: texture_atlas_layout.clone(),
+    //         index: 124,
+    //     },
+    //     ..default()
+    // }));
 }

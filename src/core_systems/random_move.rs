@@ -6,7 +6,7 @@ pub fn random_system(movers_query: Query<(Entity, &Position), With<MovingRandoml
 
         let target = target_query
             .iter()
-            .filter(|(potential_target, potential_target_position)| **potential_target_position == (*current_mover_position + direction) && *potential_target != current_mover_entity)
+            .filter(|(potential_target, potential_target_position)| potential_target_position.0 == (current_mover_position.0 + direction) && *potential_target != current_mover_entity)
             .map(|(target, _)| target)
             .next();
 
@@ -14,7 +14,7 @@ pub fn random_system(movers_query: Query<(Entity, &Position), With<MovingRandoml
         if let Some(enemy) = target {
             ev_wants_to_attack.send(WantsToAttackEvent { attacker: current_mover_entity, victim: enemy });
         } else {
-            ev_wants_to_move.send(WantsToMoveEvent { entity: current_mover_entity, destination: *current_mover_position + direction });
+            ev_wants_to_move.send(WantsToMoveEvent { entity: current_mover_entity, destination: Position(current_mover_position.0 + direction) });
         }
     }
 }

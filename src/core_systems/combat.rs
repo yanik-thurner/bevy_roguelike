@@ -29,7 +29,6 @@ pub fn combat_system(mut commands: Commands, mut ev_attack: EventReader<WantsToA
     attacker_victim_pairs.iter().for_each(|(_, victim)| {
         let mut victim_health = combat_query.get_mut(*victim).unwrap().0;
 
-        victim_health.before = victim_health.current;
         victim_health.current -= 1;
         if victim_health.current < 1 && *victim != player {
             commands.entity(*victim).despawn_recursive();

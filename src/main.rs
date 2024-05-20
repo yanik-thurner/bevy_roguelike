@@ -28,6 +28,8 @@ mod prelude {
     pub const SPRITE_SHEET_FLOOR: usize = 46;
 }
 
+const MAP_WIDTH: usize = 80;
+const MAP_HEIGHT: usize = 50;
 
 fn main() {
     App::new()

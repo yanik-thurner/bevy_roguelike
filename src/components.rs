@@ -3,39 +3,11 @@ use bevy::utils::HashSet;
 pub use crate::prelude::*;
 
 
-
-#[derive(Component, Clone, Debug, PartialEq)]
-pub struct Player {
-    pub move_cooldown: Timer,
-}
-
-#[derive(Component, Clone, Copy, Debug, PartialEq)]
-pub struct Enemy;
-
 pub enum EnemyType {
     ETTIN,
     OGRE,
     ORC,
     GOBLIN,
-}
-
-impl Player {
-    pub fn new() -> Self {
-        Player {
-            move_cooldown: Timer::from_seconds(0.15, TimerMode::Once)
-        }
-    }
-}
-
-#[derive(Component)]
-pub struct PlayerCamera;
-
-
-#[derive(Component, Clone, Copy, Debug, PartialEq)]
-pub struct Health {
-    pub before: i32,
-    pub current: i32,
-    pub max: i32,
 }
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]

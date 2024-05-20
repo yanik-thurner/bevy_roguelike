@@ -8,7 +8,10 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                            mut ev_wants_to_move: EventWriter<WantsToMoveEvent>,
                            mut ev_wants_to_attack: EventWriter<WantsToAttackEvent>,
 ) {
-    let (entity, mut player,  position, mut health) = player_query.get_single_mut().unwrap();
+    if player_query.is_empty() {
+        return;
+    }
+    let (entity, mut player, position, mut health) = player_query.get_single_mut().unwrap();
     if player.move_cooldown.tick(time.delta()).finished() {
         let delta = if keyboard_input.pressed(KeyCode::ArrowUp) {
             Some(GridDirection::NORTH)
@@ -28,20 +31,16 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
             Some(GridDirection::NONE) => {
                 player.move_cooldown.reset();
 
-                if health.current == health.before {
-                    health.current = i32::min(health.max, health.current + 1);
-                }
-                health.before = health.current;
                 turn_state.set(TurnState::PlayerTurn);
             }
             Some(delta) => {
                 player.move_cooldown.reset();
 
-                let new_position = *position + &delta;
+                let new_position = position.0 + &delta;
 
                 let target = enemy_query
                     .iter()
-                    .filter(|(pos, _)| **pos == new_position)
+                    .filter(|(pos, _)| pos.0 == new_position)
                     .map(|(_, enemy)| enemy)
                     .next();
 
@@ -50,7 +49,7 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                     ev_wants_to_attack.send(WantsToAttackEvent { attacker: entity, victim: enemy });
                     turn_state.set(TurnState::PlayerTurn);
                 } else {
-                    ev_wants_to_move.send(WantsToMoveEvent { entity, destination: new_position });
+                    ev_wants_to_move.send(WantsToMoveEvent { entity, destination: Position(new_position) });
                     turn_state.set(TurnState::PlayerTurn);
                 }
             }
