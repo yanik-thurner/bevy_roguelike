@@ -9,7 +9,7 @@ fn get_possible_next_positions(current_position: &GridPosition) -> [GridPosition
 }
 
 
-pub fn chase_player_system(map: Res<MapResource>, player_query: Query<(Entity, &Position), With<Player>>, enemy_query: Query<(Entity, &Position, &FieldOfView), (With<Enemy>, With<ChasingPlayer>, Without<Player>)>, mut ev_move: EventWriter<WantsToMoveEvent>, mut ev_attack: EventWriter<WantsToAttackEvent>) {
+pub fn chase_player_system(map: Res<MapResource>, player_query: Query<(Entity, &PositionComponent), With<PlayerComponent>>, enemy_query: Query<(Entity, &PositionComponent, &FieldOfViewComponent), (With<EnemyComponent>, With<ChasingPlayer>, Without<PlayerComponent>)>, mut ev_move: EventWriter<WantsToMoveEvent>, mut ev_attack: EventWriter<WantsToAttackEvent>) {
     let (player, player_position) = player_query.get_single().unwrap();
 
     let dijkstra_map = path_finding::create_dijkstra_map(&map.0, &player_position.0);
@@ -27,7 +27,7 @@ pub fn chase_player_system(map: Res<MapResource>, player_query: Query<(Entity, &
         if let Some(distance) = dijkstra_map[next_y][next_x] {
             match distance {
                 0 => { ev_attack.send(WantsToAttackEvent { attacker: enemy, victim: player }); }
-                _ => { ev_move.send(WantsToMoveEvent { entity: enemy, destination: Position(*next_position) }); }
+                _ => { ev_move.send(WantsToMoveEvent { entity: enemy, destination: PositionComponent(*next_position) }); }
             };
         }
     }

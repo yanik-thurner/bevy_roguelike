@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn end_turn_system(current_turn_state: Res<State<TurnState>>, player: Query<(&Health, &Position), With<Player>>, amulet: Query<&Position, With<AmuletOfYala>>, mut next_turn_state: ResMut<NextState<TurnState>>) {
+pub fn end_turn_system(current_turn_state: Res<State<TurnState>>, player: Query<(&HealthComponent, &PositionComponent), With<PlayerComponent>>, amulet: Query<&PositionComponent, With<AmuletOfYala>>, mut next_turn_state: ResMut<NextState<TurnState>>) {
     let current_state = current_turn_state.get().clone();
     let mut following_state = match current_state {
         TurnState::Init => TurnState::AwaitingInput,
@@ -17,7 +17,7 @@ pub fn end_turn_system(current_turn_state: Res<State<TurnState>>, player: Query<
             }
         }
 
-        if player_health.current < 1 && current_state != TurnState::Init {
+        if player_health.0.current < 1 && current_state != TurnState::Init {
             following_state = TurnState::GameOver;
         }
     }

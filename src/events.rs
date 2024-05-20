@@ -5,7 +5,7 @@ use crate::prelude::*;
 #[derive(Event)]
 pub struct WantsToMoveEvent {
     pub entity: Entity,
-    pub destination: Position,
+    pub destination: PositionComponent,
 }
 
 #[derive(Event)]

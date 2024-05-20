@@ -81,15 +81,15 @@ fn setup_health_bar(commands: &mut Commands) {
     commands.entity(hp_root).push_children(&[hp_text]);
 }
 
-pub fn update_healthbar(player_health_query: Query<&Health, With<Player>>, mut hp_bar_query: Query<&mut Style, With<HpBar>>, mut hp_text_query: Query<&mut Text, With<HpText>>) {
+pub fn update_healthbar(player_health_query: Query<&HealthComponent, With<PlayerComponent>>, mut hp_bar_query: Query<&mut Style, With<HpBar>>, mut hp_text_query: Query<&mut Text, With<HpText>>) {
     let health = player_health_query;
     let mut hp_bar = hp_bar_query.get_single_mut().unwrap();
     let mut hp_text = hp_text_query.get_single_mut().unwrap();
 
     for health in health.iter() {
-        hp_bar.width = Val::Percent(health.current as f32 / health.max as f32 * 100.0);
-        hp_text.sections[0].value = health.current.to_string();
-        hp_text.sections[2].value = health.max.to_string();
+        hp_bar.width = Val::Percent(health.0.current as f32 / health.0.max as f32 * 100.0);
+        hp_text.sections[0].value = health.0.current.to_string();
+        hp_text.sections[2].value = health.0.max.to_string();
     }
 }
 

@@ -3,12 +3,6 @@ use bevy::utils::HashSet;
 pub use crate::prelude::*;
 
 
-pub enum EnemyType {
-    ETTIN,
-    OGRE,
-    ORC,
-    GOBLIN,
-}
 
 #[derive(Component, Clone, Copy, Debug, PartialEq)]
 pub struct EnemyHpRoot;
@@ -47,13 +41,13 @@ pub struct Item;
 pub struct AmuletOfYala;
 
 #[derive(Component, Clone, Debug, PartialEq)]
-pub struct FieldOfView {
+pub struct FieldOfViewComponent {
     pub visible_tiles: HashSet<GridPosition>,
     pub radius: usize,
     pub is_dirty: bool,
 }
 
-impl FieldOfView {
+impl FieldOfViewComponent {
     pub fn new(radius: usize) -> Self {
         Self {
             visible_tiles: HashSet::new(),

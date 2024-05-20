@@ -6,6 +6,19 @@ pub const SPRITE_ID_WALL: usize = 35;
 pub const SPRITE_ID_FLOOR: usize = 46;
 
 pub const SPRITE_ID_PLAYER: usize = 64;
+pub const SPRITE_ID_GOBLIN: usize = 103;
+pub const SPRITE_ID_ORC: usize = 111;
+pub const SPRITE_ID_OGRE: usize = 79;
+pub const SPRITE_ID_ETTIN: usize = 69;
+
+pub fn get_enemy_sprite_id_by_type(enemy_type: &EnemyType) -> usize {
+    match enemy_type {
+        EnemyType::GOBLIN => SPRITE_ID_GOBLIN,
+        EnemyType::ORC => SPRITE_ID_ORC,
+        EnemyType::OGRE => SPRITE_ID_OGRE,
+        EnemyType::ETTIN => SPRITE_ID_ETTIN
+    }
+}
 
 #[derive(Resource)]
 pub struct GameAssets {

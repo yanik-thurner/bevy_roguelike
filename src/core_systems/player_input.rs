@@ -2,8 +2,8 @@ use crate::prelude::*;
 
 pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                            time: Res<Time>,
-                           mut player_query: Query<(Entity, &mut Player, &Position, &mut Health)>,
-                           enemy_query: Query<(&Position, Entity), With<Enemy>>,
+                           mut player_query: Query<(Entity, &mut PlayerComponent, &PositionComponent, &mut HealthComponent)>,
+                           enemy_query: Query<(&PositionComponent, Entity), With<EnemyComponent>>,
                            mut turn_state: ResMut<NextState<TurnState>>,
                            mut ev_wants_to_move: EventWriter<WantsToMoveEvent>,
                            mut ev_wants_to_attack: EventWriter<WantsToAttackEvent>,
@@ -49,7 +49,7 @@ pub fn player_input_system(keyboard_input: Res<ButtonInput<KeyCode>>,
                     ev_wants_to_attack.send(WantsToAttackEvent { attacker: entity, victim: enemy });
                     turn_state.set(TurnState::PlayerTurn);
                 } else {
-                    ev_wants_to_move.send(WantsToMoveEvent { entity, destination: Position(new_position) });
+                    ev_wants_to_move.send(WantsToMoveEvent { entity, destination: PositionComponent(new_position) });
                     turn_state.set(TurnState::PlayerTurn);
                 }
             }

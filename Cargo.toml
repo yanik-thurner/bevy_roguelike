@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { version = "0.13.2", features = ["dynamic_linking"] }
-
+tracing = "0.1.40"
 num-traits = "0.2.19"
 
+
+bevy = { version = "0.13.2", features = ["dynamic_linking"] }
 # RNG
 rand_core = "0.6.4"
 rand_chacha = "0.3.1"

@@ -5,9 +5,7 @@ use num_traits::{Bounded, PrimInt, cast::FromPrimitive};
 use rand_core::{RngCore, SeedableRng};
 use wyrand::WyRand;
 
-use crate::components::GridPosition;
-
-use super::prelude::Rect;
+use super::prelude::*;
 
 pub struct RandomUtil;
 
@@ -62,8 +60,24 @@ impl RandomUtil {
         Rect::new(GridPosition::new(x, y), GridPosition::new(x + width as i32, y + height as i32))
     }
 
-    pub fn rect_inside_rect<C: RangeBounds<u32>>(random: u32, mut surrounding_rect: Rect, width_range: C, height_range: C) -> Rect {
-        Self::rect_by_xy_and_dimensions(random, surrounding_rect.x_range(), surrounding_rect.y_range(), width_range, height_range)
+    pub fn rect_inside_rect<C: RangeBounds<u32>>(random: u32, mut surrounding_rect: Rect, width_range: C, height_range: C) -> Result<Rect, String> {
+        let max_width = match width_range.end_bound() {
+            Bound::Included(&end) => end,
+            Bound::Excluded(&end) => end - 1,
+            Bound::Unbounded => u32::MAX
+        };
+        let max_height = match height_range.end_bound() {
+            Bound::Included(&end) => end,
+            Bound::Excluded(&end) => end - 1,
+            Bound::Unbounded => u32::MAX
+        };
+
+        let overflow_restriction = surrounding_rect.with_padding_asymmetric(max_height, max_width, 0, 0);
+        if let Ok(rect) = overflow_restriction {
+            Ok(Self::rect_by_xy_and_dimensions(random, rect.x_range(), rect.y_range(), width_range, height_range))
+        } else {
+            Err(format!("Width- (..={}) or Height-Ranges (..={}) could result in bigger rectangle than the surrounding one ({:?})!", max_width, max_height, &surrounding_rect))
+        }
     }
 }
 
@@ -84,7 +98,7 @@ impl Random
         RandomUtil::pick_from_range(self.rng.next_u32(), range)
     }
 
-    pub fn rect_inside_rect<C: RangeBounds<u32>>(&mut self, surrounding_rect: Rect, width_range: C, height_range: C) -> Rect {
+    pub fn rect_inside_rect<C: RangeBounds<u32>>(&mut self, surrounding_rect: Rect, width_range: C, height_range: C) -> Result<Rect, String> {
         RandomUtil::rect_inside_rect(self.rng.next_u32(), surrounding_rect, width_range, height_range)
     }
 

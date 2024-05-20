@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn sync_cam_system(mut camera: Query<&mut Transform, (With<PlayerCamera>, Without<Player>)>, player_transform: Query<&Transform, (With<Player>, Without<PlayerCamera>)>) {
+pub fn sync_cam_system(mut camera: Query<&mut Transform, (With<PlayerCamera>, Without<PlayerComponent>)>, player_transform: Query<&Transform, (With<PlayerComponent>, Without<PlayerCamera>)>) {
     if camera.is_empty() || player_transform.is_empty() {
         println!("{}, {}", camera.is_empty(), player_transform.is_empty());
         return;

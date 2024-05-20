@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn random_system(movers_query: Query<(Entity, &Position), With<MovingRandomly>>, target_query: Query<(Entity, &Position), With<Health>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>, mut ev_wants_to_attack: EventWriter<WantsToAttackEvent>, mut rng: Query<&mut EntropyComponent<WyRand>, With<RngSource>>) {
+pub fn random_system(movers_query: Query<(Entity, &PositionComponent), With<MovingRandomly>>, target_query: Query<(Entity, &PositionComponent), With<HealthComponent>>, mut ev_wants_to_move: EventWriter<WantsToMoveEvent>, mut ev_wants_to_attack: EventWriter<WantsToAttackEvent>, mut rng: Query<&mut EntropyComponent<WyRand>, With<RngSource>>) {
     for (current_mover_entity, current_mover_position) in movers_query.iter() {
         let direction = GridDirection::ALL_DIRECTIONS[RngHelper::generate_from_range(rng.get_single_mut().unwrap().next_u32(), 0..9) as usize];
 
@@ -14,7 +14,7 @@ pub fn random_system(movers_query: Query<(Entity, &Position), With<MovingRandoml
         if let Some(enemy) = target {
             ev_wants_to_attack.send(WantsToAttackEvent { attacker: current_mover_entity, victim: enemy });
         } else {
-            ev_wants_to_move.send(WantsToMoveEvent { entity: current_mover_entity, destination: Position(current_mover_position.0 + direction) });
+            ev_wants_to_move.send(WantsToMoveEvent { entity: current_mover_entity, destination: PositionComponent(current_mover_position.0 + direction) });
         }
     }
 }

@@ -1,4 +1,3 @@
-use crate::components::{GridDirection, GridPosition};
 use crate::{MAP_HEIGHT, MAP_WIDTH};
 use crate::prelude::*;
 

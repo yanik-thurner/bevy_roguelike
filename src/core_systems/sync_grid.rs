@@ -3,9 +3,9 @@ use crate::prelude::*;
 const SPEED: f32 = 25.0;
 
 pub fn sync_grid_system(mut commands: Commands,
-                        mut query: Query<(Entity, &mut Transform, &mut Visibility, &Position, Option<&Enemy>), Without<PlayerCamera>>,
+                        mut query: Query<(Entity, &mut Transform, &mut Visibility, &PositionComponent, Option<&EnemyComponent>), Without<PlayerCamera>>,
                         mut revealed: Query<&mut Sprite, (With<WallOrFloor>, With<Revealed>)>,
-                        player: Query<&FieldOfView, With<Player>>,
+                        player: Query<&FieldOfViewComponent, With<PlayerComponent>>,
                         time: Res<Time>) {
     for (entity, mut transform, mut visibility, grid_pos, enemy) in query.iter_mut() {
         let target_position = Vec3::new(grid_pos.0.x as f32 * SPRITE_SIZE, grid_pos.0.y as f32 * SPRITE_SIZE, transform.translation.z);

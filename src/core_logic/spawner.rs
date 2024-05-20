@@ -10,44 +10,11 @@ pub fn spawn_random_monsters(mut commands: Commands, map: Res<MapResource>, asse
 }
 
 
-struct EnemyData {
-    pub hp: i32,
-    #[allow(dead_code)]
-    pub name: String,
-    pub sprite_id: i32,
-}
-
-impl EnemyData {
-    pub fn generate_by_type(enemy_type: &EnemyType) -> Self {
-        match enemy_type {
-            EnemyType::ETTIN => todo!(), //69
-            EnemyType::OGRE => todo!(), //79
-            EnemyType::GOBLIN => EnemyData::generate_goblin(),
-            EnemyType::ORC => EnemyData::generate_orc(),
-        }
-    }
-    pub fn generate_goblin() -> Self {
-        EnemyData {
-            hp: 1,
-            name: "Goblin".into(),
-            sprite_id: 103,
-        }
-    }
-
-    pub fn generate_orc() -> Self {
-        EnemyData {
-            hp: 2,
-            name: "Orc".into(),
-            sprite_id: 111,
-        }
-    }
-}
-
 fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPosition, asset_server: &Res<AssetServer>, texture_atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>) {
     let layout = TextureAtlasLayout::from_grid(Vec2::new(SPRITE_SIZE, SPRITE_SIZE), 16, 16, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
 
-    let enemy_data = EnemyData::generate_by_type(&enemy_type);
+    let enemy_data = EnemyStats::get_by_type(&enemy_type);
 
     let hp_root = commands.spawn((EnemyHpRoot, SpriteBundle {
         sprite: Sprite {
@@ -70,11 +37,11 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
     })).id();
 
     let mut cmds = commands.spawn((
-        Enemy,
-        Health::new(enemy_data.hp),
-        Position(position),
+        EnemyComponent,
+        HealthComponent(enemy_data.health),
+        PositionComponent(position),
         Attacker::new(),
-        FieldOfView::new(6),
+        FieldOfViewComponent::new(6),
         ChasingPlayer,
         SpriteSheetBundle {
             texture: asset_server.load("dungeonfont.png"),
@@ -82,7 +49,7 @@ fn spawn_enemy(commands: &mut Commands, enemy_type: EnemyType, position: GridPos
             visibility: Visibility::Hidden,
             atlas: TextureAtlas {
                 layout: texture_atlas_layout.clone(),
-                index: enemy_data.sprite_id as usize,
+                index: get_enemy_sprite_id_by_type(&enemy_type),
             },
             ..default()
         }));

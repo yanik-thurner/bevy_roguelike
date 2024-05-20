@@ -2,11 +2,11 @@ use std::ops::{Add, AddAssign};
 use super::prelude::*;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct Position(pub GridPosition);
+pub struct PositionComponent(pub GridPosition);
 
-impl Position {
+impl PositionComponent {
     pub fn new(x: i32, y: i32) -> Self {
-        Position(GridPosition::new(x, y))
+        PositionComponent(GridPosition::new(x, y))
     }
 
     pub fn grid_to_transform(&self) -> Transform{

@@ -11,6 +11,8 @@ pub struct MapBuilder {
 
 impl MapBuilder {
     const ROOM_TRIES: usize = 1_000;
+    const ROOM_MIN_SIZE: usize = 2;
+    const ROOM_MAX_SIZE: usize = 10;
 
     pub fn build(map_width: usize, map_height: usize, max_rooms: usize, seed: u64) -> Self {
         let mut rng = Random::new(seed);
@@ -36,24 +38,33 @@ impl MapBuilder {
 
     fn fill_rect(&mut self, rect: Rect, tile_type: TileType) {
         self.map.iter_mut_tiles()
-            .filter(|t| rect.contains(t.get_pos()))
+            .filter(|t| rect.contains_position(t.get_pos()))
             .for_each(|t| t.tile_type = tile_type);
     }
 
     fn build_random_rooms(&mut self, max_rooms: usize, rng: &mut Random) {
         let mut tries: usize = 0;
         let map_rect_with_padding = self.map.get_rect().with_padding(1);
-        while self.rooms.len() < max_rooms && tries < Self::ROOM_TRIES {
-            let room = rng.rect_inside_rect(map_rect_with_padding, 3..10, 3..10);
+        let size_range = Self::ROOM_MIN_SIZE as u32..Self::ROOM_MAX_SIZE as u32;
 
-            let overlap = self.rooms.iter().any(|r| r.intersects(&room));
+        if let Ok(generation_bounds) = map_rect_with_padding {
+            while self.rooms.len() < max_rooms && tries < Self::ROOM_TRIES {
+                let room = rng.rect_inside_rect(generation_bounds, size_range.clone(), size_range.clone());
 
-            if !overlap {
-                self.fill_rect(room, TileType::Floor);
-                self.rooms.push(room);
+                if let Ok(room) = room {
+                    let overlap = self.rooms.iter().any(|r| r.intersects(&room.with_margin(1)));
+
+                    if !overlap {
+                        self.fill_rect(room, TileType::Floor);
+                        self.rooms.push(room);
+                    }
+                }
+
+
+                tries += 1;
             }
-
-            tries += 1;
+        } else {
+            panic!("Map too small!");
         }
     }
 

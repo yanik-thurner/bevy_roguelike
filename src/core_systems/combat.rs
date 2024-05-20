@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-pub fn combat_system(mut commands: Commands, mut ev_attack: EventReader<WantsToAttackEvent>, mut combat_query: Query<(&mut Health, Entity)>, mut animation_query: Query<(&Transform, &mut Attacker), (With<Health>, With<Position>)>, player_query: Query<Entity, With<Player>>, state: Res<State<TurnState>>) {
+pub fn combat_system(mut commands: Commands, mut ev_attack: EventReader<WantsToAttackEvent>, mut combat_query: Query<(&mut HealthComponent, Entity)>, mut animation_query: Query<(&Transform, &mut Attacker), (With<HealthComponent>, With<PositionComponent>)>, player_query: Query<Entity, With<PlayerComponent>>, state: Res<State<TurnState>>) {
     let player = player_query.get_single().unwrap();
 
     let attacker_victim_pairs: Vec<_> = ev_attack.read()
@@ -29,8 +29,8 @@ pub fn combat_system(mut commands: Commands, mut ev_attack: EventReader<WantsToA
     attacker_victim_pairs.iter().for_each(|(_, victim)| {
         let mut victim_health = combat_query.get_mut(*victim).unwrap().0;
 
-        victim_health.current -= 1;
-        if victim_health.current < 1 && *victim != player {
+        victim_health.0.current -= 1;
+        if victim_health.0.current < 1 && *victim != player {
             commands.entity(*victim).despawn_recursive();
         }
     });

@@ -876,6 +876,7 @@ dependencies = [
  "num-traits",
  "rand_chacha",
  "rand_core",
+ "tracing",
  "wyrand",
 ]
 

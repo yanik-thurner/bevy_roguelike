@@ -95,7 +95,7 @@ fn field_of_view_set(center: &GridPosition, radius: usize, map: &Map) -> HashSet
     visible_points
 }
 
-pub fn fov_system(mut views: Query<(&Position, &mut FieldOfView)>, mut map: ResMut<MapResource>) {
+pub fn fov_system(mut views: Query<(&PositionComponent, &mut FieldOfViewComponent)>, mut map: ResMut<MapResource>) {
     views.iter_mut()
         .filter(|(_, fov)| fov.is_dirty)
         .for_each(|(pos, mut fov)| {

@@ -13,7 +13,7 @@ mod game_logic;
 mod core;
 
 mod prelude {
-    pub use bevy::prelude::*;
+    pub use tracing::*;
 
     pub use crate::components::*;
     pub use crate::core::prelude::*;
@@ -23,9 +23,7 @@ mod prelude {
     pub use crate::game_logic::prelude::*;
     pub use crate::states::*;
 
-    pub const SPRITE_SIZE: f32 = 32.0;
-    pub const SPRITE_SHEET_WALL: usize = 35;
-    pub const SPRITE_SHEET_FLOOR: usize = 46;
+    pub use bevy::prelude::*;
 }
 
 const MAP_WIDTH: usize = 80;

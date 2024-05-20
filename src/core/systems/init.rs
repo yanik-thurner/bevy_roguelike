@@ -3,11 +3,11 @@ use crate::core::actor::ActorBundle;
 use crate::prelude::*;
 
 
-pub fn init_cam(mut commands: Commands, mut existing_camera: Query<Entity, With<PlayerCamera>>, player: Query<&Position, With<Player>>) {
+pub fn init_cam(mut commands: Commands, mut existing_camera: Query<Entity, With<PlayerCamera>>, player: Query<&PositionComponent, With<PlayerComponent>>) {
     let camera = if existing_camera.is_empty() {
-        existing_camera.get_single_mut().unwrap()
-    } else {
         commands.spawn((PlayerCamera, Camera2dBundle::default())).id()
+    } else {
+        existing_camera.get_single_mut().unwrap()
     };
 
     let mut new_transform = Transform::from_xyz(0.0, 0.0, 0.0);

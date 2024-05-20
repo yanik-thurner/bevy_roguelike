@@ -1,13 +1,13 @@
 use crate::prelude::*;
 
 #[derive(Component, Clone, Debug, PartialEq, Eq)]
-pub struct Player {
+pub struct PlayerComponent {
     pub move_cooldown: Timer,
 }
 
-impl Player {
+impl PlayerComponent {
     pub fn new() -> Self {
-        Player {
+        PlayerComponent {
             move_cooldown: Timer::from_seconds(0.15, TimerMode::Once)
         }
     }
@@ -17,49 +17,37 @@ impl Player {
 pub struct Npc;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct Enemy;
+pub struct EnemyComponent;
 
 #[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct Health {
-    pub current: i32,
-    pub max: i32,
-}
-
-impl Health {
-    pub fn new(hp: i32) -> Self {
-        Health {
-            current: hp,
-            max: hp,
-        }
-    }
-}
+pub struct HealthComponent(pub Health);
 
 #[derive(Bundle, Clone)]
 pub struct ActorBundle {
-    pub position: Position,
-    pub health: Health,
-    pub fov: FieldOfView,
+    pub position: PositionComponent,
+    pub health: HealthComponent,
+    pub fov: FieldOfViewComponent,
     pub sprite: SpriteSheetBundle,
 }
 
 impl ActorBundle {
-    pub fn new_player(position: GridPosition, assets: &Res<GameAssets>) -> (Player, ActorBundle) {
+    pub fn new_player(position: GridPosition, assets: &Res<GameAssets>) -> (PlayerComponent, ActorBundle) {
         println!("Spawning Player at ({:?})", &position);
-        (Player::new(),
+        (PlayerComponent::new(),
          ActorBundle {
-             position: Position(position),
-             health: Health::new(10),
-             fov: FieldOfView::new(8),
+             position: PositionComponent(position),
+             health: HealthComponent(Health::new(10)),
+             fov: FieldOfViewComponent::new(8),
              sprite: new_sprite(SPRITE_ID_PLAYER, true, &assets).attach_transform(&position, LAYER_PLAYER),
          })
     }
 
-    pub fn new_enemy(position: GridPosition, assets: Res<GameAssets>) -> (Enemy, Npc, ActorBundle) {
-        (Enemy, Npc,
+    pub fn new_enemy(position: GridPosition, assets: Res<GameAssets>) -> (EnemyComponent, Npc, ActorBundle) {
+        (EnemyComponent, Npc,
          ActorBundle {
-             position: Position(position),
-             health: Health::new(2),
-             fov: FieldOfView::new(7),
+             position: PositionComponent(position),
+             health: HealthComponent(Health::new(2)),
+             fov: FieldOfViewComponent::new(7),
              sprite: new_sprite(SPRITE_ID_PLAYER, false, &assets).attach_transform(&position, LAYER_PLAYER),
          }
         )

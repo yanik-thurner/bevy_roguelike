@@ -1,7 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::ops::Div;
 use std::slice::{Iter, IterMut};
-use crate::game_logic::*;
 
 use super::prelude::*;
 
@@ -65,10 +64,13 @@ impl Map {
         let max_xy = GridPosition::new(width.div(2) as i32 - 1, height.div(2) as i32 - 1);
         let mut xy_to_idx = HashMap::new();
         let mut idx_to_xy = HashMap::new();
+        let mut tiles = vec![TileBuilder::build_wall(GridPosition::new(0, 0)); width * height];
+
 
         for idx in 0..(width * height) {
             let encoding = encoding::y_first;
             let (x, y) = encoding(idx, width, height);
+            tiles[idx] = TileBuilder::build_floor(GridPosition::new(x, y));
             xy_to_idx.insert((x, y), idx);
             idx_to_xy.insert(idx, (x, y));
         }
@@ -77,7 +79,7 @@ impl Map {
             dimension: (width, height),
             min_xy,
             max_xy,
-            tiles: vec![TileBuilder::build_wall(GridPosition::new(0, 0)); width * height],
+            tiles,
             revealed: vec![false; width * height],
             xy_to_idx,
             idx_to_xy,
