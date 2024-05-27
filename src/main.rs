@@ -1,29 +1,15 @@
 use bevy::ecs::schedule::{LogLevel, ScheduleBuildSettings};
 
 use prelude::*;
+
 use crate::core::Core;
 
-mod components;
-mod core_systems;
-mod core_logic;
-mod states;
-mod system_sets;
-mod events;
-mod game_logic;
 mod core;
 
 mod prelude {
-    pub use tracing::*;
-
-    pub use crate::components::*;
-    pub use crate::core::prelude::*;
-    pub use crate::core_logic::*;
-    pub use crate::core_systems::*;
-    pub use crate::events::*;
-    pub use crate::game_logic::prelude::*;
-    pub use crate::states::*;
-
     pub use bevy::prelude::*;
+
+    pub use crate::core::prelude::*;
 }
 
 const MAP_WIDTH: usize = 80;
@@ -40,7 +26,6 @@ fn main() {
         })
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(Core)
-        .add_plugins(CoreSystems)
         .insert_resource(Msaa::Off)
         .run();
 }

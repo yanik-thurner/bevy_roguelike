@@ -11,6 +11,8 @@ pub const SPRITE_ID_ORC: usize = 111;
 pub const SPRITE_ID_OGRE: usize = 79;
 pub const SPRITE_ID_ETTIN: usize = 69;
 
+pub const SPRITE_ID_AMULET: usize = 124;
+
 pub fn get_enemy_sprite_id_by_type(enemy_type: &EnemyType) -> usize {
     match enemy_type {
         EnemyType::GOBLIN => SPRITE_ID_GOBLIN,
@@ -39,7 +41,7 @@ pub fn load_assets(mut commands: Commands, asset_server: Res<AssetServer>, mut t
 pub struct SpriteSheetBundleWithoutTransform(SpriteSheetBundle);
 
 impl SpriteSheetBundleWithoutTransform {
-    pub fn attach_transform(&self, pos: &GridPosition, layer: f32) -> SpriteSheetBundle {
+    pub fn attach_transform(&self, pos: &Position, layer: f32) -> SpriteSheetBundle {
         let mut ssb = self.0.clone();
         ssb.transform = Transform::from_xyz(pos.x as f32 * SPRITE_SIZE, pos.y as f32 * SPRITE_SIZE, layer);
         ssb
